@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1048</width>
+    <height>832</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1048</width>
+    <height>832</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1048</width>
+    <height>832</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Image</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QLabel" name="img_gray">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>320</width>
+               <height>320</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>320</width>
+               <height>320</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="img_binary">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>320</width>
+               <height>320</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>320</width>
+               <height>320</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Preview</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="GLWidget" name="glwidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>650</width>
+             <height>650</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>650</width>
+             <height>650</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Level</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="combo_frame"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Threshold</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="slider_threshold">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_threshold">
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Show Cursor</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1048</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Volume"/>
+    <addaction name="actionSave_Volume"/>
+    <addaction name="actionSave_Mesh"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menu2D_Process">
+     <property name="title">
+      <string>2D Process</string>
+     </property>
+     <addaction name="actionErode2D"/>
+     <addaction name="actionDilate2D"/>
+     <addaction name="actionOpen2D"/>
+     <addaction name="actionClose2D"/>
+     <addaction name="actionClean2D"/>
+     <addaction name="separator"/>
+     <addaction name="actionSet_Range"/>
+     <addaction name="separator"/>
+     <addaction name="actionErode_All"/>
+     <addaction name="actionDilate_All"/>
+     <addaction name="actionClean_all"/>
+    </widget>
+    <widget class="QMenu" name="menu3D_Process">
+     <property name="title">
+      <string>3D Process</string>
+     </property>
+     <addaction name="actionErode3D"/>
+     <addaction name="actionDilate3D"/>
+     <addaction name="actionOpen3D"/>
+     <addaction name="actionClose3D"/>
+     <addaction name="separator"/>
+     <addaction name="actionSimplification"/>
+     <addaction name="actionSmooth3D"/>
+    </widget>
+    <addaction name="actionUndo"/>
+    <addaction name="separator"/>
+    <addaction name="menu2D_Process"/>
+    <addaction name="menu3D_Process"/>
+    <addaction name="actionGenerate"/>
+    <addaction name="separator"/>
+    <addaction name="actionReset"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_Volume">
+   <property name="text">
+    <string>Open Volume</string>
+   </property>
+  </action>
+  <action name="actionSave_Volume">
+   <property name="text">
+    <string>Save Volume</string>
+   </property>
+  </action>
+  <action name="actionSave_Mesh">
+   <property name="text">
+    <string>Save Mesh</string>
+   </property>
+  </action>
+  <action name="actionErode2D">
+   <property name="text">
+    <string>Erode</string>
+   </property>
+  </action>
+  <action name="actionDilate2D">
+   <property name="text">
+    <string>Dilate</string>
+   </property>
+  </action>
+  <action name="actionErode3D">
+   <property name="text">
+    <string>Erode</string>
+   </property>
+  </action>
+  <action name="actionDilate3D">
+   <property name="text">
+    <string>Dilate</string>
+   </property>
+  </action>
+  <action name="actionSmooth3D">
+   <property name="text">
+    <string>Smooth</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionGenerate">
+   <property name="text">
+    <string>Generate</string>
+   </property>
+  </action>
+  <action name="actionClean2D">
+   <property name="text">
+    <string>Clean</string>
+   </property>
+  </action>
+  <action name="actionOpen2D">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionClose2D">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionOpen3D">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionClose3D">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionErode_All">
+   <property name="text">
+    <string>Erode All</string>
+   </property>
+  </action>
+  <action name="actionDilate_All">
+   <property name="text">
+    <string>Dilate All</string>
+   </property>
+  </action>
+  <action name="actionSet_Range">
+   <property name="text">
+    <string>Set Range</string>
+   </property>
+  </action>
+  <action name="actionClean_all">
+   <property name="text">
+    <string>Clean all</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionSimplification">
+   <property name="text">
+    <string>Simplification</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GLWidget</class>
+   <extends>QWidget</extends>
+   <header>glwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
