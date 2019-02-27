@@ -3,6 +3,8 @@
 
 #define _USE_MATH_DEFINES
 #define UNDOSTEPS 5
+#define PRESET_THRES_MORE_BONES 25
+#define PRESET_THRES_LESS_BONES 40
 
 #include <QMainWindow>
 #include <QLabel>
@@ -16,6 +18,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QWheelEvent>
+#include <QKeyEvent>
 #include <QProgressDialog>
 #include <QInputDialog>
 #include <QPixmap>
@@ -74,6 +77,10 @@ public slots:
 
     void clean2D();
     void clean2Dall();
+    void clean2Dall_process(int,int,int);
+
+    void thresholdall();
+    void thresholdall_process(int,int,int);
 
     void reset();
     void addhistory();
@@ -81,10 +88,12 @@ public slots:
     void savemesh();
     void savevolume();
 
-    void setrange();
     void setisdrawcursor(int);
 
+    void preset_more_bone();
+
     void smooth();
+    void smooth_process(int);
     void simplification();
 
     void undo();
@@ -107,9 +116,6 @@ private:
     int maxvalue;
     int currentlevel;
 
-    int minlevel;
-    int maxlevel;
-
     bool isShowBone;
     TriMesh mesh;
     //parameter
@@ -123,6 +129,7 @@ private:
 
 protected:
     void wheelEvent(QWheelEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_H

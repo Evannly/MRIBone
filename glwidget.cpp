@@ -121,9 +121,9 @@ void GLWidget::setZRotation(int angle)
 
 void GLWidget::initializeGL()
 {
-    GLfloat light_position[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
-    GLfloat light2_position[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
-    GLfloat light3_position[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+    GLfloat light_position[4] = { 0.0f, 0.0f, 10.0f, 1.0f };
+    GLfloat light2_position[4] = { 0.0f, 10.0f, 0.0f, 1.0f };
+    GLfloat light3_position[4] = { 10.0f, 0.0f, 0.0f, 1.0f };
 
     GLfloat light_diffuse[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
     GLfloat light_ambient[4] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -188,7 +188,6 @@ void GLWidget::paintGL()
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,bo[index]);
     glDrawElements(GL_TRIANGLES,facenum * 3,GL_UNSIGNED_INT,BUFFER_OFFSET(0));
-
     //draw plane
     if(isDrawplane)
     {
@@ -298,7 +297,6 @@ void GLWidget::loaddata(int nverts, int ntris, float *verts, int *tris)
         vnormal[i].normalize();
     }
 
-    qDebug() << "Binding normal...";
     //normal
     glBindBuffer(GL_ARRAY_BUFFER,bo[normal]);
     glBufferData(GL_ARRAY_BUFFER,3*nverts*sizeof(GLfloat),NULL,GL_STATIC_DRAW);
@@ -312,7 +310,7 @@ void GLWidget::loaddata(int nverts, int ntris, float *verts, int *tris)
     glUnmapBuffer(GL_ARRAY_BUFFER);
     glNormalPointer(GL_FLOAT,0,BUFFER_OFFSET(0));
     glEnableClientState(GL_NORMAL_ARRAY);
-    qDebug() <<"Upload complete!";
+
     updateGL();
 }
 
@@ -336,7 +334,6 @@ void GLWidget::loaddata(TriMesh mesh)
     float scalex = xmax - xmin;
     float scaley = ymax - ymin;
     modelscale = max(scalex,scaley) / 2;
-
 
     for(TriMesh::VertexIter v_it = mesh.vertices_begin();v_it!=mesh.vertices_end();++v_it)
     {
@@ -399,7 +396,6 @@ void GLWidget::loaddata(TriMesh mesh)
     glUnmapBuffer(GL_ARRAY_BUFFER);
     glNormalPointer(GL_FLOAT,0,BUFFER_OFFSET(0));
     glEnableClientState(GL_NORMAL_ARRAY);
-
     updateGL();
 }
 

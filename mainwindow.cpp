@@ -27,15 +27,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionErode3D,SIGNAL(triggered()),this,SLOT(erode3D()));
     connect(ui->actionOpen3D,SIGNAL(triggered()),this,SLOT(open3D()));
     connect(ui->actionClose3D,SIGNAL(triggered()),this,SLOT(close3D()));
-    connect(ui->actionSet_Range,SIGNAL(triggered()),this,SLOT(setrange()));
     connect(ui->actionClean2D,SIGNAL(triggered()),this,SLOT(clean2D()));
     connect(ui->actionClean_all,SIGNAL(triggered()),this,SLOT(clean2Dall()));
+    connect(ui->actionThreshold_All,SIGNAL(triggered()),this,SLOT(thresholdall()));
     connect(ui->actionReset,SIGNAL(triggered()),this,SLOT(reset()));
     connect(ui->actionSave_Mesh,SIGNAL(triggered()),this,SLOT(savemesh()));
     connect(ui->actionSave_Volume,SIGNAL(triggered()),this,SLOT(savevolume()));
     connect(ui->actionUndo,SIGNAL(triggered()),this,SLOT(undo()));
     connect(ui->actionSmooth3D,SIGNAL(triggered()),this,SLOT(smooth()));
     connect(ui->actionSimplification,SIGNAL(triggered()),this,SLOT(simplification()));
+    connect(ui->actionAuto_Generate,SIGNAL(triggered()),this,SLOT(preset_more_bone()));
 
     connect(ui->checkBox,SIGNAL(stateChanged(int)),SLOT(setisdrawcursor(int)));
 
@@ -47,8 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ntris = 0;
     minvalue = 0;
     maxvalue = 0;
-    minlevel = 0;
-    maxlevel = 0;
+
 
     ui->checkBox->setCheckState(Qt::Unchecked);
 
@@ -67,12 +67,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::wheelEvent(QWheelEvent *event)
 {
-    if(!mrcvolume)
+    if(mrcvolume == NULL)
         return;
     int numDegrees = event->delta() / 8;
     int numSteps = numDegrees;
     if(currentlevel + numSteps >= 0 && currentlevel + numSteps < sizez)
     ui->combo_frame->setCurrentIndex(currentlevel + numSteps);
+    event->accept();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(mrcvolume == NULL)
+        return;
+    if(event->key() == Qt::Key_Up)
+    {
+        if(currentlevel > 0)
+            ui->combo_frame->setCurrentIndex(currentlevel - 1);
+    }
+    if(event->key() == Qt::Key_Down)
+    {
+        if(currentlevel < sizez - 1)
+            ui->combo_frame->setCurrentIndex(currentlevel + 1);
+    }
     event->accept();
 }
 
@@ -263,6 +280,11 @@ void MainWindow::openvolume()
     QString filename = QFileDialog::getOpenFileName(this,tr("Open Mesh File"),"/Users/yanhang/Documents/research");
     if(filename.length()>0)
     {
+        if(mrcvolume != NULL)
+            delete mrcvolume;
+        binaryimages.clear();
+        grayimages.clear();
+
         QProgressDialog *progress = new QProgressDialog(this);
         progress->setModal(true);
         progress->setMinimum(0);
@@ -284,9 +306,6 @@ void MainWindow::openvolume()
         sizez = mrcvolume->getSizeZ();
         minvalue = mrcvolume->getMin();
         maxvalue = mrcvolume->getMax();
-
-        maxlevel = sizez - 1;
-        minlevel = 0;
 
         mrcvolume2 = new Volume(sizex,sizey,sizez,0,0,0,mrcvolume);
 
@@ -325,44 +344,19 @@ void MainWindow::openvolume()
     }
 }
 
-void MainWindow::setrange()
-{
-    rangedialog *range = new rangedialog(this);
-    range->setmax(sizez);
-    range->setmin(0);
-    range->setModal(true);
-    if(range->exec() == QDialog::Accepted)
-    {
-        int tempmin = range->getmin();
-        int tempmax = range->getmax();
-        if(tempmin <= tempmax)
-        {
-            minlevel = tempmin;
-            maxlevel = tempmax;
-        }
-        else
-        {
-            QMessageBox::critical(this,"Set Range","Invalid value!");
-            return;
-        }
-    }
-    delete range;
-}
-
 void MainWindow::generate()
-{
-    mrcvolume->copyFromeImages(binaryimages);
-    showmesh();
-}
-
-void MainWindow::showmesh()
 {
     if(mrcvolume == NULL)
     {
         QMessageBox::critical(this,"Generate","No volume opened!");
         return;
     }
+    mrcvolume->copyFromeImages(binaryimages);
+    showmesh();
+}
 
+void MainWindow::showmesh()
+{
     UniGrid *grid = new UniGrid(mrcvolume);
     QProgressDialog *progress = new QProgressDialog(this);
     progress->setModal(true);
@@ -473,10 +467,20 @@ void MainWindow::erodeall()
 {
     if(binaryimages.size() <= currentlevel)
         return;
-    bool isOK;
-    int radius = QInputDialog::getInt(this,"Erode Operation","Please input the radius.",1,0,1000,1,&isOK);
-    if(!isOK)
+
+    int minlevel,maxlevel,radius;
+    rangedialog *setting = new rangedialog(this);
+    setting->setmax(binaryimages.size()-1);
+    setting->setmin(0);
+    if(setting->exec()==QDialog::Accepted)
+    {
+        minlevel = setting->getmin();
+        maxlevel = setting->getmax();
+        radius = setting->getvalue();
+    }
+    else
         return;
+
     addhistory();
     Mat element = getStructuringElement(MORPH_ELLIPSE,Size(radius,radius));
     if(maxlevel >= binaryimages.size())
@@ -498,11 +502,22 @@ void MainWindow::dilateall()
 {
     if(binaryimages.size() <= currentlevel)
         return;
-    bool isOK;
-    int radius = QInputDialog::getInt(this,"Dilate Operation","Please input the radius.",1,0,1000,1,&isOK);
-    if(!isOK)
+
+    int minlevel,maxlevel,radius;
+    rangedialog *setting = new rangedialog(this);
+    setting->setmax(binaryimages.size()-1);
+    setting->setmin(0);
+    if(setting->exec()==QDialog::Accepted)
+    {
+        minlevel = setting->getmin();
+        maxlevel = setting->getmax();
+        radius = setting->getvalue();
+    }
+    else
         return;
+
     addhistory();
+
     Mat element = getStructuringElement(MORPH_ELLIPSE,Size(radius,radius));
 
     if(maxlevel >= binaryimages.size())
@@ -640,21 +655,80 @@ void MainWindow::clean2D()
 
 void MainWindow::clean2Dall()
 {
-    if(binaryimages.size() <= maxlevel)
+    if(binaryimages.size() <= currentlevel)
         return;
-    bool isOK;
-    int minarea = QInputDialog::getInt(this,"Clean Operation","Minimum area: ",2,0,2147483467,1,&isOK);
-    if(!isOK)
+
+    int minlevel,maxlevel,minarea;
+    rangedialog *setting = new rangedialog(this);
+    setting->setmax(binaryimages.size()-1);
+    setting->setmin(0);
+    if(setting->exec()==QDialog::Accepted)
+    {
+        minlevel = setting->getmin();
+        maxlevel = setting->getmax();
+        minarea = setting->getvalue();
+    }
+    else
         return;
+
     addhistory();
-    for(int i=minlevel;i<maxlevel;i++)
-        removesmallarea(binaryimages[i],minarea);
+
+    clean2Dall_process(minlevel,maxlevel,minarea);
 
     QPixmap pixbinary,pixbinaryscaled;
     QImage binaryimg((uchar*)binaryimages[currentlevel].data,sizex,sizey,QImage::Format_RGB888);
     pixbinary.convertFromImage(binaryimg);
     pixbinaryscaled = pixbinary.scaledToHeight(ui->img_binary->height());
     ui->img_binary->setPixmap(pixbinaryscaled);
+}
+
+void MainWindow::clean2Dall_process(int minlevel, int maxlevel,int minarea)
+{
+    for(int i=minlevel;i<maxlevel;i++)
+        removesmallarea(binaryimages[i],minarea);
+}
+
+void MainWindow::thresholdall()
+{
+    if(binaryimages.size() <= currentlevel)
+        return;
+
+    int minlevel,maxlevel,thres;
+    rangedialog *setting = new rangedialog(this);
+    setting->setmax(binaryimages.size()-1);
+    setting->setmin(0);
+    if(setting->exec()==QDialog::Accepted)
+    {
+        minlevel = setting->getmin();
+        maxlevel = setting->getmax();
+        thres = setting->getvalue();
+    }
+    else
+        return;
+    addhistory();
+    thresholdall_process(minlevel,maxlevel,thres);
+    ui->slider_threshold->setValue(thresholdvalue[currentlevel]);
+    ui->label_threshold->setText(QString("%1").arg(thresholdvalue[currentlevel]));
+    showimage();
+}
+
+void MainWindow::thresholdall_process(int minlevel, int maxlevel, int thres)
+{
+    for(int i=minlevel;i<maxlevel;i++)
+    {
+        for(int y=0;y<sizey;y++)
+        {
+            for(int x=0;x<sizex;x++)
+            {
+                if(mrcvolume2->getDataAt(x,y,i) < thres)
+                    binaryimages[i].at<Vec3b>(y,x) = Vec3b(255,255,255);
+                else
+                    binaryimages[i].at<Vec3b>(y,x) = Vec3b(0,0,0);
+            }
+        }
+        removebackground(binaryimages[i]);
+        thresholdvalue[i] = thres;
+    }
 }
 
 void MainWindow::reset()
@@ -685,6 +759,8 @@ void MainWindow::reset()
         removebackground(curbinary);
         binaryimages.push_back(curbinary);
     }
+    ui->slider_threshold->setValue(thresholdvalue[currentlevel]);
+    ui->label_threshold->setText(QString("%1").arg(thresholdvalue[currentlevel]));
     QPixmap pixbinary,pixbinaryscaled;
     QImage binaryimg((uchar*)binaryimages[currentlevel].data,sizex,sizey,QImage::Format_RGB888);
     pixbinary.convertFromImage(binaryimg);
@@ -785,18 +861,79 @@ void MainWindow::undo()
 
 }
 
+void MainWindow::smooth_process(int iter)
+{
+    QProgressDialog *progress = new QProgressDialog();
+    progress->setLabelText("Smoothing...");
+    progress->setModal(true);
+    progress->setRange(0,100);
+
+    int unitcount = mesh.n_vertices() * 2 * iter / 100;
+    int progresscount = 0;
+    TriMesh mesh2;
+    for(int i=0;i<iter;i++)
+    {
+        mesh2 = mesh;
+        for(TriMesh::VertexIter v_it = mesh.vertices_begin();v_it!=mesh.vertices_end();++v_it)
+        {
+            if(progresscount % unitcount == 0)
+                progress->setValue(progresscount / unitcount);
+            progresscount++;
+            TriMesh::Point pointacc(0.0,0.0,0.0);
+            TriMesh::Point curpt = mesh.point(*v_it);
+            int count = 0;
+            for(TriMesh::VertexVertexIter vv_it = mesh.vv_iter(*v_it);vv_it.is_valid();++vv_it)
+            {
+                pointacc += mesh2.point(*vv_it);
+                count++;
+            }
+            float lamda = 0.1;
+            pointacc[0] = pointacc[0] / (double)count;
+            pointacc[1] = pointacc[1] / (double)count;
+            pointacc[2] = pointacc[2] / (double)count;
+            curpt[0] = (1.0-lamda) * pointacc[0] + lamda*curpt[0];
+            curpt[1] = (1.0-lamda) * pointacc[1] + lamda*curpt[1];
+            curpt[2] = (1.0-lamda) * pointacc[2] + lamda*curpt[2];
+            mesh.set_point(*v_it,curpt);
+        }
+        mesh2 = mesh;
+        for(TriMesh::VertexIter v_it = mesh.vertices_begin();v_it!=mesh.vertices_end();++v_it)
+        {
+            if(progresscount % unitcount == 0)
+                progress->setValue(progresscount / unitcount);
+            progresscount++;
+            TriMesh::Point pointacc(0.0,0.0,0.0);
+            TriMesh::Point curpt = mesh.point(*v_it);
+            int count = 0;
+            for(TriMesh::VertexVertexIter vv_it = mesh.vv_iter(*v_it);vv_it.is_valid();++vv_it)
+            {
+                pointacc += mesh2.point(*vv_it);
+                count++;
+            }
+            const float lamda = 1.0/(0.1-1/0.1);
+            pointacc[0] = pointacc[0] / (double)count;
+            pointacc[1] = pointacc[1] / (double)count;
+            pointacc[2] = pointacc[2] / (double)count;
+            curpt[0] = (1.0-lamda)*pointacc[0] + lamda*curpt[0];
+            curpt[1] = (1.0-lamda)*pointacc[1] + lamda*curpt[1];
+            curpt[2] = (1.0-lamda)*pointacc[2] + lamda*curpt[2];
+            mesh.set_point(*v_it,curpt);
+        }
+    }
+    delete progress;
+}
+
 void MainWindow::smooth()
 {
     if(mesh.n_vertices() == 0)
-        return;
+            return;
 
     bool isOK;
     int iter = QInputDialog::getInt(this,"Smoothing","Iteration",2,1,30,1,&isOK);
     if(!isOK)
         return;
-    OpenMesh::Smoother::JacobiLaplaceSmootherT<TriMesh> smoother(mesh);
-    smoother.initialize(smoother.Normal,smoother.C0);
-    smoother.smooth(iter);
+    addhistory();
+    smooth_process(iter);
 
     ui->glwidget->loaddata(mesh);
 }
@@ -811,6 +948,13 @@ void MainWindow::simplification()
     if(!isOK)
         return;
     addhistory();
+
+    mesh.release_vertex_normals();
+    mesh.release_face_normals();
+    mesh.release_vertex_status();
+    mesh.release_face_status();
+
+
     OpenMesh::Decimater::DecimaterT <TriMesh> decimater(mesh);
     OpenMesh::Decimater::ModQuadricT<TriMesh>::Handle hModQuadric;
     decimater.add(hModQuadric);
@@ -818,7 +962,27 @@ void MainWindow::simplification()
     decimater.initialize();
     decimater.decimate_to(targetnum);
 
+    mesh.request_vertex_normals();
+    mesh.request_face_normals();
+    mesh.request_vertex_status();
+    mesh.request_face_status();
+
     mesh.update_normals();
     ui->glwidget->loaddata(mesh);
+}
 
+void MainWindow::preset_more_bone()
+{
+    if(mrcvolume == NULL || binaryimages.size() < sizez)
+        return;
+    thresholdall_process(0,sizez - 1,PRESET_THRES_LESS_BONES);
+    clean2Dall_process(0,sizez-1,45);
+
+    QPixmap pixbinary,pixbinaryscaled;
+    QImage binaryimg((uchar*)binaryimages[currentlevel].data,sizex,sizey,QImage::Format_RGB888);
+    pixbinary.convertFromImage(binaryimg);
+    pixbinaryscaled = pixbinary.scaledToHeight(ui->img_binary->height());
+    ui->img_binary->setPixmap(pixbinaryscaled);
+
+    generate();
 }

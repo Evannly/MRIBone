@@ -4,10 +4,10 @@ void UniGrid::init()
 {
     // building tables
     ttrees = new TriangulationTree* [7];
-    ttrees[4] = new TriangulationTree( "/Users/yanhang/Documents/research/contour/pretriang_4.txt", 4 );
-    ttrees[5] = new TriangulationTree( "/Users/yanhang/Documents/research/contour/pretriang_5.txt", 5 );
-    ttrees[6] = new TriangulationTree( "/Users/yanhang/Documents/research/contour/pretriang_6.txt", 6 );
-    cube = new Cube( "/Users/yanhang/Documents/research/contour/cycle8.txt" ) ;
+    ttrees[4] = new TriangulationTree( "pretriang_4.txt", 4 );
+    ttrees[5] = new TriangulationTree( "pretriang_5.txt", 5 );
+    ttrees[6] = new TriangulationTree( "pretriang_6.txt", 6 );
+    cube = new Cube( "cycle8.txt" ) ;
     
     totalverts = 0 ;
     totaltris = 0 ;
